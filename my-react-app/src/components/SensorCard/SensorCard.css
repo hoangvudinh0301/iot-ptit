@@ -1,0 +1,36 @@
+.sensor-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.sensor-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+
+.sensor-card h3 {
+  margin: 0 0 5px;
+  color: #2867e8;
+  font-size: 18px;
+}
+
+.sensor-value {
+  padding: 20px;
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.temperature .sensor-value {
+  color: #ff7a00;
+}
+
+.humidity .sensor-value {
+  color: #00c94f;
+}
+
+.light .sensor-value {
+  color: #ffc400;
+}

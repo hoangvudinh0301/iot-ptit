@@ -1,0 +1,25 @@
+.history-search {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.history-search select,
+.history-search input {
+    height: 30px;
+    border: none;
+    border-radius: 5px;
+    padding: 0 10px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.history-search select {
+    color: #2367ee;
+    font-weight: 600;
+}
+
+.sensor-search input::placeholder {
+    color: #b5c5e8;
+}

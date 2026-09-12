@@ -1,0 +1,30 @@
+.layout {
+  min-height: 100vh;
+  background-color: #e5e5e5;
+
+  justify-content: center;
+  align-items: center;
+}
+
+.layout-body {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+}
+
+.layout-content {
+    flex: 1;
+    min-width: 0;
+}
+
+@media (max-width: 768px) {
+
+    .layout-body {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .layout-content {
+        width: 100%;
+    }
+}

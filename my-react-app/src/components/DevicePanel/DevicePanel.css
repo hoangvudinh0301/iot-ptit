@@ -1,0 +1,54 @@
+.device-panel {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.device-panel h3 {
+    margin: 0 0 10px;
+    text-align: center;
+    color: #2367EE;
+    font-size: 18px;
+}
+.device-item {
+    color: white;
+    font-weight: bold;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #2367EE;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.device-item span {
+    font-weight: 600;
+}
+.switch {
+    position: relative;
+    width: 42px;
+    height: 22px;
+    border: none;
+    border-radius: 20px;
+    background-color: #ddd;
+    cursor: pointer;
+    transition: 0.3;
+    padding: 0;
+}
+.switch-circle {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background-color: white;
+    left: 2px;
+    top: 2px;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+.switch.on {
+    background: #22c55e;
+}
+.switch.on .switch-circle{
+    transform: translateX(20px);
+}

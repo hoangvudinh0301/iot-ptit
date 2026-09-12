@@ -1,0 +1,41 @@
+.profile {
+    background-color: white;
+    border-radius: 8px;
+    padding: 40px;
+}
+
+.profile-avatar img {
+    width: 150px;
+    border-radius: 8px;
+}
+
+.profile-avatar span {
+    color: #2367EE;
+    font-weight: bold;
+}
+
+.profile {
+    display: grid;
+    grid-template-columns: 0.5fr 2fr;
+    gap: 20px;
+}
+
+.profile-row {
+    display: grid;
+    grid-template-columns: 0.5fr 2fr;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.profile-row span {
+    font-weight: bold;
+    color: #2367EE;
+}
+
+@media (max-width: 768px) {
+
+    .profile {
+        display: flex;
+        flex-direction: column;
+    }
+}
