@@ -1,0 +1,49 @@
+.history-table-wrapper {
+    background-color: white;
+    border-radius: 6px;
+    padding: 5px 10px;
+    overflow-x: auto;
+    min-height: auto;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.history-table th {
+    cursor: pointer;
+    color: #2367ee;
+    font-weight: 600;
+    border-bottom: 1px solid #999;
+    padding: 7px 5px;
+    white-space: nowrap;
+}
+
+.history-table td {
+    text-align: center;
+    padding: 8px 5px;
+    border-bottom: 1px solid #ddd;
+    white-space: nowrap;
+}
+
+.divice {
+    color: #ff7200;
+    font-weight: 600;
+}
+
+.action {
+    color: #18c94f;
+    font-weight: 600;
+}
+
+.status {
+    color: #f2c000;
+    font-weight: 600;
+}
+
+.createdAt {
+    color: #2367ee;
+    font-weight: 600;
+}

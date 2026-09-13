@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,11 +24,15 @@ import lombok.experimental.FieldDefaults;
 public class History {
     
     @Id 
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
-    String deviceId;
-    String userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer id;
+    
+    @ManyToOne
+    @JoinColumn(name = "device_id", nullable = false)
+    Device device;
+
+    Integer userId;
     String action;
     String status;
-    LocalDateTime createAt;
+    LocalDateTime createdAt;
 }

@@ -1,0 +1,40 @@
+.sensor-table-wrapper {
+    background-color: white;
+    border-radius: 6px;
+    padding: 5px 10px;
+    overflow-x: auto;
+    min-height: auto;
+}
+
+.sensor-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.sensor-table th {
+    cursor: pointer;
+    color: #2367ee;
+    font-weight: 600;
+    border-bottom: 1px solid #999;
+    padding: 7px 5px;
+    white-space: nowrap;
+}
+
+.sensor-table td {
+    text-align: center;
+    padding: 8px 5px;
+    border-bottom: 1px solid #ddd;
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.sensor {
+    color: #ff7200;
+    font-weight: 600;
+}
+
+.value {
+    color: #18c94f;
+    font-weight: 600;
+}

@@ -20,9 +20,9 @@ import lombok.experimental.FieldDefaults;
 
 public class Sensor {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 
-    String id;
+    Integer id;
     String name;
     String type;
     String location;

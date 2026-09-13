@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,11 +23,13 @@ import lombok.experimental.FieldDefaults;
 public class SensorData {
 
     @Id 
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
-    String sensorId;
-    Double temperature;
-    Double humidity;
-    Double light;
-    LocalDateTime create_at;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer id;
+    
+    @ManyToOne 
+    @JoinColumn(name="sensor_id", nullable = false)
+    Sensor sensor;
+
+    Double value;
+    LocalDateTime createdAt;
 }

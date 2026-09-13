@@ -1,0 +1,29 @@
+.sensor-search {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.sensor-search select,
+.sensor-search input {
+    height: 30px;
+    border: none;
+    border-radius: 5px;
+    padding: 0 10px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.sensor-search select {
+    color: #2367ee;
+    font-weight: 600;
+}
+
+.sensor-search input {
+    color: #2367ee;
+}
+
+.sensor-search input::placeholder {
+    color: #b5c5e8;
+}
