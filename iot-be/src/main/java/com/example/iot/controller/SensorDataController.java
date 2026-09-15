@@ -1,6 +1,7 @@
 package com.example.iot.controller;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +32,11 @@ public class SensorDataController {
         @RequestParam (name = "size", defaultValue = "10") int size
     ) {
         return sensorDataService.getAllSensorData(PageRequest.of(page, size));
+    }
+
+    @GetMapping("/chart")
+    public List<SensorData> getAllSensorDataChart() {
+        return sensorDataService.getAllSensorDataChart();
     }
 
     @GetMapping("/search/name")

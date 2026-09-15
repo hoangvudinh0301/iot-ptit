@@ -1,12 +1,13 @@
 .history-search {
     display: grid;
-    grid-template-columns: 130px 1fr;
+    grid-template-columns: 130px 1fr 80px;
     gap: 12px;
     margin-bottom: 10px;
 }
 
 .history-search select,
-.history-search input {
+.history-search input,
+.history-search button {
     height: 30px;
     border: none;
     border-radius: 5px;
@@ -26,4 +27,13 @@
 
 .history-search input {
     color: #2367ee;
+}
+
+.history-search button {
+    background-color: #2367ee;
+    color: white;
+    font-weight: 600;
+}
+.history-search button:hover {
+    opacity: 0.8;
 }

@@ -32,7 +32,7 @@ public class HistoryController {
     ) {
         return historyService.getAllHistory(PageRequest.of(page, size));
     } 
-
+    
     @GetMapping("/search/device-name")
     public Page<History> getHistoryByDeviceName(@RequestParam String name, 
         @RequestParam (name = "page", defaultValue = "0") int page,

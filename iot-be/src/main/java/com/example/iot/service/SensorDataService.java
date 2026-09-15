@@ -3,6 +3,7 @@ package com.example.iot.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,10 @@ import lombok.experimental.FieldDefaults;
 public class SensorDataService {
 
     SensorDataRepository sensorDataRepository;
+
+    public List<SensorData> getAllSensorDataChart() {
+        return sensorDataRepository.findAll();
+    }
 
     public Page<SensorData> getAllSensorData(Pageable pageable) {
         return sensorDataRepository.findAll(pageable);

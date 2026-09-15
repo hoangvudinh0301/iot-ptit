@@ -3,9 +3,14 @@ import {useState} from "react";
 function DeviceItem({ name }) {
     const [isOn, setIsOn] = useState(false);
 
-    const toggleDevice = () => {
-        setIsOn(!isOn);
-    };
+    // const toggleDevice = () => {
+    //     const newStatus = !isOn;
+
+    //     try {
+    //         const resopnse = await fetch(
+    //             "")
+    //     }
+    // };
 
     return (
         <div className="device-item">

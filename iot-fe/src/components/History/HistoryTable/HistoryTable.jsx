@@ -1,45 +1,73 @@
 import HistoryPagination from "../HistoryPagination/HistoryPagination";
 import "./HistoryTable.css";
 import { useState } from "react";
+import { useEffect } from "react";
+// const histories = [
+//     {
+//         id: 1,
+//         device: "LED 1",
+//         action: "ON",
+//         status: "ON",
+//         createdAt: "2026-09-12 17:00:00"
+//     },
+//     {
+//         id: 2,
+//         device: "LED 2",
+//         action: "ON",
+//         status: "ON",
+//         createdAt: "2026-09-12 17:30:00"
+//     },
+//     {
+//         id: 3,
+//         device: "LED 1",
+//         action: "OFF",
+//         status: "ON",
+//         createdAt: "2026-09-12 17:40:00"
+//     },
+//     {
+//         id: 4,
+//         device: "LED 2",
+//         action: "OFF",
+//         status: "ON",
+//         createdAt: "2026-09-12 17:50:00"
+//     },
+//     {
+//         id: 5,
+//         device: "LED 2",
+//         action: "ON",
+//         status: "ON",
+//         createdAt: "2026-09-12 17:55:00"
+//     },
+// ];
+function HistoryTable({searchType, searchValue, currentPage, onPageChange}) {
 
-const histories = [
-    {
-        id: 1,
-        device: "LED 1",
-        action: "ON",
-        status: "ON",
-        createdAt: "2026-09-12 17:00:00"
-    },
-    {
-        id: 2,
-        device: "LED 2",
-        action: "ON",
-        status: "ON",
-        createdAt: "2026-09-12 17:30:00"
-    },
-    {
-        id: 3,
-        device: "LED 1",
-        action: "OFF",
-        status: "ON",
-        createdAt: "2026-09-12 17:40:00"
-    },
-    {
-        id: 4,
-        device: "LED 2",
-        action: "OFF",
-        status: "ON",
-        createdAt: "2026-09-12 17:50:00"
-    },
-    {
-        id: 5,
-        device: "LED 2",
-        action: "ON",
-        status: "ON",
-        createdAt: "2026-09-12 17:55:00"
-    },
-];
-function HistoryTable() {
+    const [histories, setHistories] = useState([]);
+    const [totalPages, setTotalPages] = useState(0);
+    
+    const pageSize = 5;
+    
+    
+    useEffect(() => {
+        let url;
+    
+        if (searchType === "all" || searchValue === "") {
+            url = `http://localhost:8080/api/history/all?page=${currentPage}&size=${pageSize}`;
+        } else if (searchType === "time") {
+            url = `http://localhost:8080/api/history/search/date?date=${searchValue}&page=${currentPage}&size=${pageSize}`;
+        } else {
+            url = `http://localhost:8080/api/history/search/device-name?name=${searchValue}&page=${currentPage}&size=${pageSize}`;
+        }
+        fetch(url)
+            .then((response) => response.json())
+            .then((data) => {
+                setHistories(data.content);
+                console.log(data.content);
+                setTotalPages(data.totalPages);
+            })
+            .catch((error) => {
+                console.error("Lỗi: ", error);
+            });
+    }, [currentPage, searchValue, searchType]);
 
     const [sortConfig, setSortConfig] = useState({
         key: null,
@@ -60,9 +88,9 @@ function HistoryTable() {
         let valueA;
         let valueB;
 
-        if (sortConfig.key === "sensor") {
-            valueA = a.device || "";
-            valueB = b.device || "";
+        if (sortConfig.key === "device") {
+            valueA = a.device?.name || "";
+            valueB = b.device?.name || "";
         } else {
             valueA = a[sortConfig.key];
             valueB = b[sortConfig.key];
@@ -118,7 +146,7 @@ function HistoryTable() {
                     {sortedData.map((history) => (
                         <tr key={history.id}>
                             <td>{history.id}</td>
-                            <td className="divice">{history.device}</td>
+                            <td className="device">{history.device?.name}</td>
                             <td className="action">{history.action}</td>
                             <td className="status">{history.status}</td>
                             <td className="createdAt">{history.createdAt}</td>
@@ -126,7 +154,7 @@ function HistoryTable() {
                     ))}
                 </tbody>
             </table>
-            <HistoryPagination />
+            <HistoryPagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange}/>
         </div>
     )
 }

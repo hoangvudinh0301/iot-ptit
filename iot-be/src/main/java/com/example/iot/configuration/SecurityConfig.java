@@ -14,7 +14,7 @@ public class SecurityConfig {
 
         http
             .csrf(csrf -> csrf.disable())
-
+            .cors(cors -> {})
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/sensor-data", "/api/sensor-data/**")
                 .permitAll()

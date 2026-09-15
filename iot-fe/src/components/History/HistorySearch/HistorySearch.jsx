@@ -1,9 +1,13 @@
 import "./HistorySearch.css"
 import {useState} from "react"
 
-function HistorySearch() {
+function HistorySearch({onSearch}) {
     const [searchType, setSearchType] = useState("id");
     const [searchValue, setSearchValue] = useState("");
+
+    const handleSearch = () => {
+        onSearch(searchType, searchValue)
+    }
 
     return (
         <div className="history-search">
@@ -21,6 +25,7 @@ function HistorySearch() {
             ) : (
                 <input type="text" placeholder="Nhập giá trị tìm kiếm..." value={searchValue} onChange={(e) => setSearchValue(e.target.value)}/>
             )}
+            <button onClick={handleSearch}>Tìm kiếm</button>
         </div>
     )
 }

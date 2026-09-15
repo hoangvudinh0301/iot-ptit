@@ -1,21 +1,29 @@
-.pagination {
+.history-pagination {
     display: flex;
     justify-content: flex-end;
     gap: 4px;
     margin: 20px;
 }
 
-.pagination button {
-    width: 22px;
-    height: 22px;
+.history-pagination button {
+    width: 25px;
+    height: 25px;
     border: none;
     border-radius: 3px;
-    background-color: #2367ee;
-    color: white;
+    color:#2367EE;
     font-weight: bold;
     cursor: pointer;
 }
 
-.pagination button:hover {
+.history-pagination button:hover {
     opacity: 0.8;
+}
+.history-pagination button.active {
+    background: #2367EE;
+    color: white;
+    border-color: #2367EE;
+}
+.history-pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }

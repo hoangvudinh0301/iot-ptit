@@ -1,12 +1,13 @@
 .sensor-search {
     display: grid;
-    grid-template-columns: 130px 1fr;
+    grid-template-columns: 130px 1fr 80px;
     gap: 12px;
     margin-bottom: 10px;
 }
 
 .sensor-search select,
-.sensor-search input {
+.sensor-search input,
+.sensor-search button {
     height: 30px;
     border: none;
     border-radius: 5px;
@@ -26,4 +27,17 @@
 
 .sensor-search input::placeholder {
     color: #b5c5e8;
+}
+
+.search-input {
+    display: flex;
+}
+
+.sensor-search button {
+    background-color: #2367ee;
+    color: white;
+    font-weight: 600;
+}
+.sensor-search button:hover {
+    opacity: 0.8;
 }
