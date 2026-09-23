@@ -1,6 +1,6 @@
 .history-search {
     display: grid;
-    grid-template-columns: 130px 1fr 80px;
+    grid-template-columns: 130px 1fr 150px 150px 150px 100px;
     gap: 12px;
     margin-bottom: 10px;
 }

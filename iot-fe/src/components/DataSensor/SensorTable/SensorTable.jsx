@@ -27,17 +27,35 @@ function SensorTable({ searchType, searchValue, currentPage, onPageChange }) {
     
     const [sensors, setSensors] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
-    const pageSize = 5;
+    const pageSize = 10;
+
+    const [sortConfig, setSortConfig] = useState({
+        key: "createdAt",
+        direction: "desc"
+    });
+
+    const handleSort = (key) => {
+        setSortConfig(prev => ({
+            key,
+            direction:
+                prev.key === key && prev.direction === "asc"
+                    ? "desc"
+                    : "asc"
+        }));
+    };
 
     useEffect(() => {
 
         let url;
+        const sortBy = sortConfig.key || "createdAt";
+        const direction = sortConfig.direction;
+
         if (searchType === "all" || searchType === "") {
-            url = `http://localhost:8080/api/sensor-data/all?page=${currentPage}&size=${pageSize}`
+            url = `http://localhost:8080/api/sensor-data/all?page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&direction=${direction}`
         } else if (searchType === "time") {
-            url = `http://localhost:8080/api/sensor-data/search/date?date=${searchValue}&page=${currentPage}&size=${pageSize}`
+            url = `http://localhost:8080/api/sensor-data/search/date?date=${searchValue}&page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&direction=${direction}`
         } else {
-            url = `http://localhost:8080/api/sensor-data/search/name?sensorName=${searchValue}&page=${currentPage}&size=${pageSize}`
+            url = `http://localhost:8080/api/sensor-data/search/name?sensorName=${searchValue}&page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&direction=${direction}`
         }
 
         fetch(url)
@@ -50,57 +68,12 @@ function SensorTable({ searchType, searchValue, currentPage, onPageChange }) {
             .catch((error) => {
                 console.error("Lỗi: ", error);
             });
-    }, [currentPage, searchType, searchValue]);
-
-
-    const [sortConfig, setSortConfig] = useState({
-        key: "null",
-        direction: "asc"
-    });
-
-    const handleSort = (key) => {
-        setSortConfig((prev) => ({
-            key,
-            direction:
-                prev.key === key && prev.direction === "asc" ? "desc" : "asc"
-        }));
-    }
-
-    const sortedData = [...sensors].sort((a, b) => {
-        if (!sortConfig.key) return 0;
-        
-        let valueA;
-        let valueB;
-
-        if (sortConfig.key === "sensor") {
-            valueA = a.sensor?.name || "";
-            valueB = b.sensor?.name || "";
-        } else {
-            valueA = a[sortConfig.key];
-            valueB = b[sortConfig.key];
-        }
-
-        if (sortConfig.key === "createdAt") {
-            valueA = new Date(valueA);
-            valueB = new Date(valueB);
-        }
-
-        if (valueA < valueB) {
-            return sortConfig.direction === "asc" ? -1 : 1;
-        }
-
-        if (valueA > valueB) {
-            return sortConfig.direction === "asc" ? 1 : -1
-        }
-
-        return 0;
-    });
+    }, [currentPage, searchType, searchValue, sortConfig]);
 
     const getIcon = (key) => {
         if (sortConfig.key !== key) return "↕";
         return sortConfig.direction === "asc" ? "↑" : "↓";
     };
-
 
     return (
         <div className="sensor-table-wrapper">
@@ -125,7 +98,7 @@ function SensorTable({ searchType, searchValue, currentPage, onPageChange }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {sortedData.map((sensor) => (
+                    {sensors.map((sensor) => (
                         <tr key={sensor.id}>
                             <td>{sensor.id}</td>
                             <td className="sensor">{sensor.sensor?.name}</td>

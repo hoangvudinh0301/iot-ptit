@@ -32,10 +32,10 @@ function SensorChart() {
                         grouped[time].temperature = item.value;
                     }
                     if (item.sensor.id === 2) {
-                        grouped[time].light = item.value;
+                        grouped[time].humidity = item.value;
                     }
                     if (item.sensor.id === 3) {
-                        grouped[time].humidity = item.value;
+                        grouped[time].light = item.value;
                     }
                 });
                 const formattedData = Object.values(grouped).map((item) => ({

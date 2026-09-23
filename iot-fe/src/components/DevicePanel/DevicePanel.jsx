@@ -5,8 +5,8 @@ function DevicePanel() {
     return (
         <div className="device-panel">
             <h3>Thiết bị</h3>
-            <DeviceItem name="Device 1" />
-            <DeviceItem name="Device 2" />
+            <DeviceItem name="Device 1" deviceId={1}/>
+            <DeviceItem name="Device 2" deviceId={2}/>
         </div>
     )
 }

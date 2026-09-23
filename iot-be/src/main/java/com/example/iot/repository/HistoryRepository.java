@@ -1,5 +1,6 @@
 package com.example.iot.repository;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,4 +20,11 @@ public interface HistoryRepository extends JpaRepository<History, Integer>{
 
     Page<History> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
 
+    Optional<History> findFirstByDevice_IdAndStatusOrderByCreatedAtDesc(
+        Integer deviceId,
+        String status
+    );
+    Optional<History> findFirstByDevice_IdOrderByCreatedAtDesc(
+        Integer deviceId
+    );
 } 

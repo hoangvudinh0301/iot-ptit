@@ -44,18 +44,35 @@ function HistoryTable({searchType, searchValue, currentPage, onPageChange}) {
     const [histories, setHistories] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
     
-    const pageSize = 5;
+    const pageSize = 10;
     
+    const [sortConfig, setSortConfig] = useState({
+        key: "createdAt",
+        direction: "desc"
+    });
+
+    const handleSort = (key) => {
+        setSortConfig(prev => ({
+            key,
+            direction:
+                prev.key === key && prev.direction === "asc"
+                    ? "desc"
+                    : "asc"
+        }));
+    };
     
     useEffect(() => {
         let url;
-    
+
+        const sortBy = sortConfig.key || "createdAt";
+        const direction = sortConfig.direction;
+
         if (searchType === "all" || searchValue === "") {
-            url = `http://localhost:8080/api/history/all?page=${currentPage}&size=${pageSize}`;
+            url = `http://localhost:8080/api/history/all?page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&direction=${direction}`;
         } else if (searchType === "time") {
-            url = `http://localhost:8080/api/history/search/date?date=${searchValue}&page=${currentPage}&size=${pageSize}`;
+            url = `http://localhost:8080/api/history/search/date?date=${searchValue}&page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&direction=${direction}`;
         } else {
-            url = `http://localhost:8080/api/history/search/device-name?name=${searchValue}&page=${currentPage}&size=${pageSize}`;
+            url = `http://localhost:8080/api/history/search/device-name?name=${searchValue}&page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&direction=${direction}`;
         }
         fetch(url)
             .then((response) => response.json())
@@ -67,50 +84,8 @@ function HistoryTable({searchType, searchValue, currentPage, onPageChange}) {
             .catch((error) => {
                 console.error("Lỗi: ", error);
             });
-    }, [currentPage, searchValue, searchType]);
+    }, [currentPage, searchValue, searchType, sortConfig]);
 
-    const [sortConfig, setSortConfig] = useState({
-        key: null,
-        direction: "asc"
-    });
-
-    const handleSort = (key) => {
-        setSortConfig((prev) => ({
-            key,
-            direction:
-                prev.key === key && prev.direction === "asc" ? "desc" : "asc"
-        }));
-    }
-
-    const sortedData = [...histories].sort((a, b) => {
-        if (!sortConfig.key) return 0;
-        
-        let valueA;
-        let valueB;
-
-        if (sortConfig.key === "device") {
-            valueA = a.device?.name || "";
-            valueB = b.device?.name || "";
-        } else {
-            valueA = a[sortConfig.key];
-            valueB = b[sortConfig.key];
-        }
-
-        if (sortConfig.key === "createdAt") {
-            valueA = new Date(valueA);
-            valueB = new Date(valueB);
-        }
-
-        if (valueA < valueB) {
-            return sortConfig.direction === "asc" ? -1 : 1;
-        }
-
-        if (valueA > valueB) {
-            return sortConfig.direction === "asc" ? 1 : -1
-        }
-
-        return 0;
-    });
 
     const getIcon = (key) => {
         if (sortConfig.key !== key) return "↕";
@@ -143,7 +118,7 @@ function HistoryTable({searchType, searchValue, currentPage, onPageChange}) {
                     </tr>
                 </thead>
                 <tbody>
-                    {sortedData.map((history) => (
+                    {histories.map((history) => (
                         <tr key={history.id}>
                             <td>{history.id}</td>
                             <td className="device">{history.device?.name}</td>

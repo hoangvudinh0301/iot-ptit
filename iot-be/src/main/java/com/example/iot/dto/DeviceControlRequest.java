@@ -10,5 +10,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DeviceControlRequest {
     Integer deviceId;
-    String status;
+    Integer userId;
+    String action;
 }

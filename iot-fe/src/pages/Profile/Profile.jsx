@@ -1,5 +1,5 @@
 import "./Profile.css"
-import avatar from "../../assets/avatar.jpg";
+import avatar from "../../assets/hv.jpg";
 function Profile() {
     return (
         <div className="profile">
@@ -26,15 +26,15 @@ function Profile() {
                 </div>
                 <div className="profile-row">
                     <span>Github:</span>
-                    <strong>link github</strong>
+                    <strong>https://github.com/hoangvudinh0301</strong>
                 </div>
                 <div className="profile-row">
                     <span>Figma:</span>
-                    <strong>link figma</strong>
+                    <strong>https://www.figma.com/design/oRUgOUhWsGui9aXIvVqqqa/IoT?node-id=0-1&t=AgUfHCMgpqccAvgL-1</strong>
                 </div>
                 <div className="profile-row">
                     <span>Báo cáo:</span>
-                    <strong>link báo cáo</strong>
+                    <strong>https://docs.google.com/document/d/1OVClRJPcYwSTTW2EHuZ_0T-nS9_Rw9CyYCK-XShW2DY/edit?usp=sharing</strong>
                 </div>
                 <div className="profile-row">
                     <span>Postman:</span>

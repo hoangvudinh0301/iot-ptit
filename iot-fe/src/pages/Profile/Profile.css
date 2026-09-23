@@ -22,7 +22,7 @@
 
 .profile-row {
     display: grid;
-    grid-template-columns: 0.5fr 2fr;
+    grid-template-columns: 0.5fr 4fr;
     padding-bottom: 10px;
     border-bottom: 1px solid #ddd;
 }

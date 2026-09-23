@@ -13,6 +13,12 @@ function HistoryPagination({ currentPage, totalPages, onPageChange }) {
     }
     return (
         <div className="history-pagination">
+            <select onChange={(e) => {
+                }}>
+                    <option value="">10</option>
+                    <option value="all">20</option>
+                    <option value="time">30</option>
+            </select>
             <button
                 disabled={currentPage === 0}
                 onClick={() => onPageChange(currentPage - 1)}

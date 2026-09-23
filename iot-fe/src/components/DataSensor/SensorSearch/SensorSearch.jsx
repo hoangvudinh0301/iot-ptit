@@ -21,13 +21,11 @@ function SensorSearch( { onSearch }) {
                 <option value="">Tìm kiếm theo</option>
                 <option value="all">Tất cả</option>
                 <option value="time">Thời gian</option>
-                <option value="sensor">Cảm biến</option>
+                <option value="temperature">Nhiệt độ</option>
+                <option value="humidity">Độ ẩm</option>
+                <option value="light">Ánh sáng</option>
             </select>
-            {searchType === "time" ? (
-                <input type="date" value={searchValue} onChange={(e) => setSearchValue(e.target.value)}/>
-            ) : (
-                <input type="text" placeholder="Nhập giá trị tìm kiếm..." value={searchValue} onChange={(e) => setSearchValue(e.target.value)}/>
-            )}
+            <input type="text" placeholder="Nhập giá trị tìm kiếm..." value={searchValue} onChange={(e) => setSearchValue(e.target.value)}/>
 
             <button onClick={handleSearch}>Tìm kiếm</button>
         </div>
