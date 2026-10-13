@@ -12,13 +12,6 @@ import com.example.iot.entity.SensorData;
 
 public interface SensorDataRepository extends JpaRepository<SensorData, Integer>{
 
-    @Query("""
-        SELECT sd FROM SensorData sd
-        WHERE LOWER(sd.sensor.name)
-        LIKE LOWER(CONCAT('%', :keyword, '%'))
-    """)
-    Page<SensorData> searchSensorDataBySensorName(@Param("keyword") String sensorName, Pageable pageable);
-    
     Page<SensorData> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
 
     @Query ("""
@@ -27,4 +20,13 @@ public interface SensorDataRepository extends JpaRepository<SensorData, Integer>
         ORDER BY sd.createdAt DESC
     """)
     List<SensorData> findLatesBySensorType(@Param("type") String type);
+
+    @Query("""
+        SELECT sd FROM SensorData sd
+        WHERE LOWER(sd.sensor.type)
+        LIKE LOWER(CONCAT('%', :type, '%'))    
+        AND sd.value = :value
+    """)
+    Page<SensorData> searchSensorDataBySensorValue(@Param("type") String type, @Param("value") Double valye, Pageable pageable);
+    List<SensorData> findTop30ByOrderByCreatedAtDesc();
 }

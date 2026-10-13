@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MqttConfig {
 
-    private final String broker = "tcp://172.20.10.3:1884";
+    private final String broker = "tcp://172.16.4.98:1884";
     private final String username = "admin";
     private final String password = "123456";
 

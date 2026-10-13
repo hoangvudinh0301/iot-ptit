@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.time.Year;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -35,10 +36,6 @@ public class SensorDataService {
 
     public Page<SensorData> getAllSensorData(Pageable pageable) {
         return sensorDataRepository.findAll(pageable);
-    }
-
-    public Page<SensorData> getSensorDataBySensorName(String sensorName, Pageable pageable) {
-        return sensorDataRepository.searchSensorDataBySensorName(sensorName, pageable);
     }
 
     public Page<SensorData> getSensorDataByDate(String time, Pageable pageable) {
@@ -98,5 +95,18 @@ public class SensorDataService {
     }
     public Optional<SensorData> getLatestByType(String type) {
         return sensorDataRepository.findLatesBySensorType(type).stream().findFirst();
+    }
+
+    public Page<SensorData> getSensorDataBySensorValue(String type, Double value, Pageable pageable) {
+        return sensorDataRepository.searchSensorDataBySensorValue(type, value, pageable);
+    }
+    
+    public List<SensorData> getLatest30() {
+        List<SensorData> data =
+            sensorDataRepository.findTop30ByOrderByCreatedAtDesc();
+        
+        Collections.reverse(data);
+
+        return data;
     }
 }

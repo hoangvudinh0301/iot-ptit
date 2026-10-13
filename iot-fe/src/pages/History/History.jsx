@@ -4,20 +4,23 @@ import HistoryTable from "../../components/History/HistoryTable/HistoryTable"
 import "./History.css"
 
 function History() {
-    const [searchType, setSearchType] = useState("id");
-    const [searchValue, setSearchValue] = useState("");
+    const [filters, setFilters] = useState({
+        time: "",
+        deviceName: "",
+        action: "",
+        status: ""
+    })
     const [currentPage, setCurrentPage] = useState(0);
 
-    const handleSearch = (type, value) => {
-        setSearchType(type);
-        setSearchValue(value);
+    const handleSearch = (newFilters) => {
+        setFilters(newFilters);
         setCurrentPage(0);
-    }
+    };
 
     return (
         <div className="history">
             <HistorySearch onSearch={handleSearch}/>
-            <HistoryTable searchType={searchType} searchValue={searchValue} currentPage={currentPage} onPageChange={setCurrentPage}/>
+            <HistoryTable filters={filters} currentPage={currentPage} onPageChange={setCurrentPage}/>
         </div>
     )
 }

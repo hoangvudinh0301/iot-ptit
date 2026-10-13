@@ -2,50 +2,44 @@ import "./HistorySearch.css"
 import {useState} from "react"
 
 function HistorySearch({onSearch}) {
-    const [searchType, setSearchType] = useState("id");
-    const [searchValue, setSearchValue] = useState("");
-
+    const [filters, setFilters] = useState({
+        time: "",
+        deviceName: "",
+        action: "",
+        status: ""
+    });
+    const handleChange = (key, value) => {
+        setFilters(prev => ({
+            ...prev,
+            [key]: value
+        }));
+    };
     const handleSearch = () => {
-        onSearch(searchType, searchValue)
-    }
-
+        onSearch({...filters});
+    };
     return (
         <div className="history-search">
-            <select value={searchType} onChange={(e) => {
-                setSearchType(e.target.value);
-                setSearchValue("");
-            }}>
-                <option value="">Tìm kiếm theo</option>
-                <option value="all">Tất cả</option>
-                <option value="time">Thời gian</option>
-                {/* <option value="device">Thiết bị</option>
-                <option value="action">Hành động</option>
-                <option value="action">Trạng thái</option> */}
+            <input type="text" placeholder="Nhập thời gian tìm kiếm..." 
+                    value={filters.time} 
+                    onChange={(e) => handleChange("time", e.target.value)}/>
+            <select value={filters.deviceName} 
+                onChange={(e) => handleChange("deviceName", e.target.value)}>
+                <option value="">Thiết bị</option>
+                <option value="LED1">LED1</option>
+                <option value="LED2">LED2</option>
             </select>
-            <input type="text" placeholder="Nhập giá trị tìm kiếm..." value={searchValue} onChange={(e) => setSearchValue(e.target.value)}/>
-            <select onChange={(e) => {
-                }}>
-                    <option value="">Thiết bị</option>
-                    <option value="all">LED1</option>
-                    <option value="time">LED2</option>
-                </select>
-                <select onChange={(e) => {
-                }}>
-                    <option value="">Hành động</option>
-                    <option value="all">ON</option>
-                    <option value="time">OFF</option>
-                </select>
-
-                <select onChange={(e) => {
-                }}>
-                    <option value="">Trạng thái<i></i></option>
-                    <option value="all">ON</option>
-                    <option value="time">OFF</option>
-                </select>
+            <select value={filters.action} onChange={(e) => handleChange("action", e.target.value)}>
+                <option value="">Hành động</option>
+                <option value="ON">ON</option>
+                <option value="OFF">OFF</option>
+            </select>
+            <select value={filters.status} onChange={(e) => handleChange("status", e.target.value)}>
+                <option value="">Trạng thái</option>
+                <option value="PENDING">PENDING</option>
+                <option value="ON">ON</option>
+                <option value="OFF">OFF</option>
+            </select>
             <button onClick={handleSearch}>Tìm kiếm</button>
-            <div className="filter">
-                
-            </div>
         </div>
         
     )

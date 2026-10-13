@@ -4,9 +4,14 @@ import {useState} from "react"
 function SensorSearch( { onSearch }) {
     const [searchType, setSearchType] = useState("id");
     const [searchValue, setSearchValue] = useState("");
-
+    const [error, setError] = useState(false);
     const handleSearch = () => {
-        onSearch(searchType, searchValue)
+        if (searchType !== "all" && !searchValue.trim()) {
+            setError(true);
+            return;
+        }
+        setError(false);
+        onSearch(searchType, searchValue);
     }
 
     return (
@@ -17,6 +22,7 @@ function SensorSearch( { onSearch }) {
                 onChange={(e) => {
                     setSearchType(e.target.value);
                     setSearchValue("");
+                    setError(false);
             }}>
                 <option value="">Tìm kiếm theo</option>
                 <option value="all">Tất cả</option>
@@ -25,8 +31,12 @@ function SensorSearch( { onSearch }) {
                 <option value="humidity">Độ ẩm</option>
                 <option value="light">Ánh sáng</option>
             </select>
-            <input type="text" placeholder="Nhập giá trị tìm kiếm..." value={searchValue} onChange={(e) => setSearchValue(e.target.value)}/>
-
+            <input type="text" className={error ? "input-error" : ""}
+                placeholder={error ? "Vui lòng nhập giá trị tìm kiếm" : "Nhập giá trị tìm kiếm..."}
+                value={searchValue} 
+                onChange={(e) => {
+                    setSearchValue(e.target.value); 
+                    setError("")}}/>
             <button onClick={handleSearch}>Tìm kiếm</button>
         </div>
     )

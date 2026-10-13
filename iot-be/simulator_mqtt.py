@@ -4,7 +4,7 @@ import random
 import threading
 import paho.mqtt.client as mqtt
 
-BROKER = "172.20.10.3"
+BROKER = "192.168.100.155"
 PORT = 1884
 USERNAME = "admin"
 PASSWORD = "123456"
@@ -83,7 +83,7 @@ def publish_sensor_data(client):
             print("Sensor publish failed")
 
         # Giống ESP32 interval = 2000ms
-        time.sleep(3)
+        time.sleep(3600)
 
 def on_connect(client, userdata, flags, rc):
 

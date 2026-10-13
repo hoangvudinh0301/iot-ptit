@@ -8,7 +8,7 @@
 .sensor-search select,
 .sensor-search input,
 .sensor-search button {
-    height: 30px;
+    height: 40px;
     border: none;
     border-radius: 5px;
     padding: 0 10px;
@@ -40,4 +40,31 @@
 }
 .sensor-search button:hover {
     opacity: 0.8;
+}
+.search-error {
+    color: #e53935;
+    font-size: 13px;
+    margin-top: 5px;
+}
+.input-error {
+    border: 1px solid #ef4444 !important;
+    background-color: #fff5f5;
+    animation: inputShake 0.3s ease;
+}
+
+.input-error::placeholder {
+    color: #ef4444;
+    font-weight: 500;
+}
+
+.input-error:focus {
+    outline: none;
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+@keyframes inputShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
 }

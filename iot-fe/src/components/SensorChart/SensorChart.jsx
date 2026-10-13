@@ -18,11 +18,12 @@ function SensorChart() {
     const [sensorData, setSensorData] = useState([]);
 
     useEffect(() => {
-        fetch(`http://localhost:8080/api/sensor-data/chart`)
+        fetch(`http://localhost:8080/api/sensor-data/latest-30`)
             .then((response) => response.json())
             .then((data) => {
 
                 const grouped = {};
+                console.log(data);
                 data.forEach((item) => {
                     const time = item.createdAt;
                     if (!grouped[time]) {
@@ -40,9 +41,11 @@ function SensorChart() {
                 });
                 const formattedData = Object.values(grouped).map((item) => ({
                     ...item,
-                    time: new Date(item.time).toLocaleDateString("vi-VN", {
+                    time: new Date(item.time).toLocaleTimeString("vi-VN", {
                         hour: "2-digit",
-                        minute: "2-digit"
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: false
                     })
                 }));
                 setSensorData(formattedData);
@@ -58,11 +61,19 @@ function SensorChart() {
             <h3>Biểu đồ</h3>
             <div className="chart">
                 <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={sensorData} margin={{top: 5, right: 5, left: 0, bottom: 5}}>
+                    <LineChart data={sensorData} margin={{top: 5, right: 10, left: 0, bottom: 10}}>
                         <CartesianGrid strokeDasharray="0" stroke="#e5e5e5"/>
-                        <XAxis dataKey="time" tick={{ fontSize: 10 }}/>
+                        <XAxis
+                            dataKey="time"
+                            tick={{ fontSize: 11 }}
+                            angle={-45}
+                            textAnchor="end"
+                            height={65}
+                            interval={0}
+                            minTickGap={5}
+                        />
                         <YAxis tick={{ fontSize: 10 }} />
-                        <Tooltip />
+                        <Tooltip labelFormatter={(time) => `Thời gian: ${time}`}/>
                         <Legend wrapperStyle={{fontSize: "10px", paddingBottom: "5px"}} />
 
                         <Line

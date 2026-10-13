@@ -1,6 +1,6 @@
 import "./Pagination.css";
-
-function Pagination({ currentPage, totalPages, onPageChange }) {
+import { useState } from "react";
+function Pagination({ currentPage, totalPages, onPageChange, pageSize, onPageSizeChange}) {
 
     let startPage = Math.max(0, currentPage - 2);
     let endPage = Math.min(totalPages, startPage + 5);
@@ -11,14 +11,16 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
     for (let i = startPage; i < endPage; i++) {
         pages.push(i);
     }
+
     return (
         <div className="pagination">
-            <select onChange={(e) => {
-                }}>
-                    <option value="">10</option>
-                    <option value="all">20</option>
-                    <option value="time">30</option>
+            <span>Số trang</span>
+            <select value={pageSize} onChange={(e) => onPageSizeChange(Number(e.target.value))}>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
             </select>
+            <span>Trang {currentPage + 1}/{totalPages}</span>
             <button
                 disabled={currentPage === 0}
                 onClick={() => onPageChange(currentPage - 1)}

@@ -1,13 +1,10 @@
 package com.example.iot.controller;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,22 +37,16 @@ public class HistoryController {
             : Sort.by(sortBy).descending();
         return historyService.getAllHistory(PageRequest.of(page, size, sort));
     } 
-    
-    @GetMapping("/search/device-name")
-    public Page<History> getHistoryByDeviceName(@RequestParam String name, 
-        @RequestParam (name = "page", defaultValue = "0") int page,
-        @RequestParam (name = "size", defaultValue = "10") int size,
-        @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
-        @RequestParam(name = "direction", defaultValue = "desc") String direction
-    ){
-        Sort sort = direction.equalsIgnoreCase("asc")
-            ? Sort.by(sortBy).ascending()
-            : Sort.by(sortBy).descending();
-        return historyService.getHistoryByDeviceName(name, PageRequest.of(page, size, sort));
+    @GetMapping("/latest")
+    public Optional<History> getLatestHistory(@RequestParam Integer deviceId) {
+        return historyService.getLatestHistory(deviceId);
     }
-
-    @GetMapping("/search/date")
-    public Page<History> getHistoryByDate(@RequestParam String date,
+    @GetMapping("/search")
+    public Page<History> searchHistory(
+        @RequestParam(required = false) String time,
+        @RequestParam(required = false) String deviceName,
+        @RequestParam(required = false) String action,
+        @RequestParam(required = false) String status,
         @RequestParam (name = "page", defaultValue = "0") int page,
         @RequestParam (name = "size", defaultValue = "10") int size,
         @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
@@ -64,11 +55,6 @@ public class HistoryController {
         Sort sort = direction.equalsIgnoreCase("asc")
             ? Sort.by(sortBy).ascending()
             : Sort.by(sortBy).descending();
-        return historyService.getHistoryByDate(date, PageRequest.of(page, size, sort));
-    }
-
-    @GetMapping("/latest")
-    public Optional<History> getLatestHistory(@RequestParam Integer deviceId) {
-        return historyService.getLatestHistory(deviceId);
+        return historyService.searchHistory(time, deviceName, action, status, PageRequest.of(page, size, sort));
     }
 }

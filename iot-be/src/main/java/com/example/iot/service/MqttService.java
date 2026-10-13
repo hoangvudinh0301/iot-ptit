@@ -35,7 +35,7 @@ public class MqttService {
     }
 
     public boolean publish(String topic, String message) {
-
+        
         if (mqttClient == null) {
             System.out.println("MQTT not connected!");
             return false;

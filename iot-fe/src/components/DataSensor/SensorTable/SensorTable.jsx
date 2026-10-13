@@ -27,7 +27,7 @@ function SensorTable({ searchType, searchValue, currentPage, onPageChange }) {
     
     const [sensors, setSensors] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
-    const pageSize = 10;
+    const [pageSize, setPageSize] = useState(10);
 
     const [sortConfig, setSortConfig] = useState({
         key: "createdAt",
@@ -54,10 +54,13 @@ function SensorTable({ searchType, searchValue, currentPage, onPageChange }) {
             url = `http://localhost:8080/api/sensor-data/all?page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&direction=${direction}`
         } else if (searchType === "time") {
             url = `http://localhost:8080/api/sensor-data/search/date?date=${searchValue}&page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&direction=${direction}`
+        } else if (searchType === "temperature") {
+            url = `http://localhost:8080/api/sensor-data/search/sensor?type=temperature&value=${searchValue}&page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&direction=${direction}`
+        } else if (searchType === "humidity") {
+            url = `http://localhost:8080/api/sensor-data/search/sensor?type=humidity&value=${searchValue}&page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&direction=${direction}`
         } else {
-            url = `http://localhost:8080/api/sensor-data/search/name?sensorName=${searchValue}&page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&direction=${direction}`
+            url = `http://localhost:8080/api/sensor-data/search/sensor?type=light&value=${searchValue}&page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&direction=${direction}`
         }
-
         fetch(url)
             .then((response) => response.json())
             .then((data) => {
@@ -68,7 +71,7 @@ function SensorTable({ searchType, searchValue, currentPage, onPageChange }) {
             .catch((error) => {
                 console.error("Lỗi: ", error);
             });
-    }, [currentPage, searchType, searchValue, sortConfig]);
+    }, [currentPage, searchType, searchValue, sortConfig, pageSize]);
 
     const getIcon = (key) => {
         if (sortConfig.key !== key) return "↕";
@@ -110,7 +113,11 @@ function SensorTable({ searchType, searchValue, currentPage, onPageChange }) {
             </table>
             <Pagination currentPage={currentPage}
                 totalPages={totalPages}
-                onPageChange={onPageChange}/>
+                onPageChange={onPageChange}
+                onPageSizeChange={(size) => {
+                    setPageSize(size);
+                    onPageChange(0);
+                }}/>
         </div>
     )
 }

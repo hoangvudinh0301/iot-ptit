@@ -1,7 +1,5 @@
 package com.example.iot.controller;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,33 +46,7 @@ public class SensorDataController {
     public List<SensorData> getAllSensorDataChart() {
         return sensorDataService.getAllSensorDataChart();
     }
-
-    @GetMapping("/search/name")
-    public Page<SensorData> getSensorDataBySensorName(@RequestParam String sensorName, 
-        @RequestParam (name = "page", defaultValue = "0") int page,
-        @RequestParam (name = "size", defaultValue = "10") int size,
-        @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
-        @RequestParam(name = "direction", defaultValue = "desc") String direction
-    ) {
-        Sort sort = direction.equalsIgnoreCase("asc")
-            ? Sort.by(sortBy).ascending()
-            : Sort.by(sortBy).descending();
-        return sensorDataService.getSensorDataBySensorName(sensorName, PageRequest.of(page, size, sort));
-    }
     
-    @GetMapping("/search/date")
-    public Page<SensorData> getSensorDataByDate(@RequestParam String date, 
-        @RequestParam (name = "page", defaultValue = "0") int page,
-        @RequestParam (name = "size", defaultValue = "10") int size,
-        @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
-        @RequestParam(name = "direction", defaultValue = "desc") String direction
-    ) {
-        Sort sort = direction.equalsIgnoreCase("asc")
-            ? Sort.by(sortBy).ascending()
-            : Sort.by(sortBy).descending();
-
-        return sensorDataService.getSensorDataByDate(date, PageRequest.of(page, size, sort));
-    }
     @GetMapping("/latest")
     public ResponseEntity<?> getLatest() {
 
@@ -98,5 +70,21 @@ public class SensorDataController {
                 .orElse(null)
         );
         return ResponseEntity.ok(result);
+    }
+    @GetMapping("/search/sensor")
+    public Page<SensorData> getSensorDataBySensorValue(@RequestParam String type, @RequestParam Double value,
+        @RequestParam (name = "page", defaultValue = "0") int page,
+        @RequestParam (name = "size", defaultValue = "10") int size,
+        @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
+        @RequestParam(name = "direction", defaultValue = "desc") String direction
+    ) {
+        Sort sort = direction.equalsIgnoreCase("asc")
+            ? Sort.by(sortBy).ascending()
+            : Sort.by(sortBy).descending();
+        return sensorDataService.getSensorDataBySensorValue(type, value, PageRequest.of(page, size, sort));
+    }
+    @GetMapping("/latest-30")
+    public List<SensorData> getLatest30() {
+        return sensorDataService.getLatest30();
     }
 }

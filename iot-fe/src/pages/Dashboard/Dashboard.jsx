@@ -34,7 +34,7 @@ function Dashboard() {
                 />
                 <SensorCard
                     title="Ánh sáng"
-                    value={`${sensorData.temperature} Lux`}
+                    value={`${sensorData.light} Lux`}
                     type="light"
                 />
             </div>

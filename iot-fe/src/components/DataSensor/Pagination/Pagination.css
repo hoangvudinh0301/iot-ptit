@@ -34,3 +34,9 @@
     border: 1px solid #2367EE;
     border-radius: 3px;
 }
+.pagination span {
+    color: #2367EE;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0px 5px;
+}
