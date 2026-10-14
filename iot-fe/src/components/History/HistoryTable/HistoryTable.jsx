@@ -7,9 +7,7 @@ function HistoryTable({ filters, currentPage, onPageChange }) {
     const [histories, setHistories] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
     const [loading, setLoading] = useState(false);
-
-    const pageSize = 10;
-
+    const [pageSize, setPageSize] = useState(10);
     const [sortConfig, setSortConfig] = useState({
         key: "createdAt",
         direction: "desc"
@@ -70,7 +68,7 @@ function HistoryTable({ filters, currentPage, onPageChange }) {
         };
         fetchHistory();
         return () => controller.abort();
-    }, [currentPage, filters, sortConfig]);
+    }, [currentPage, filters, sortConfig, pageSize]);
 
     const getIcon = (key) => {
         if (sortConfig.key !== key) return "↕";
@@ -86,6 +84,7 @@ function HistoryTable({ filters, currentPage, onPageChange }) {
                         <th onClick={() => handleSort("action")}>Hành động {getIcon("action")}</th>
                         <th onClick={() => handleSort("status")}>Trạng thái {getIcon("status")}</th>
                         <th onClick={() => handleSort("createdAt")}>Thời gian {getIcon("createdAt")}</th>
+                        <th onClick={() => handleSort("userId")}>Người dùng {getIcon("userId")}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -101,6 +100,7 @@ function HistoryTable({ filters, currentPage, onPageChange }) {
                                 <td className="action">{history.action}</td>
                                 <td className="status">{history.status}</td>
                                 <td className="createdAt">{history.createdAt}</td>
+                                <td className="user">{history.userId}</td>
                             </tr>
                         ))
                     )}
@@ -111,6 +111,10 @@ function HistoryTable({ filters, currentPage, onPageChange }) {
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={onPageChange}
+                onPageSizeChange={(size) =>{
+                    onPageChange(0);
+                    setPageSize(size);
+                }}
             />
         </div>
     );

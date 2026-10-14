@@ -50,9 +50,9 @@ public class DeviceController {
         historyRepository.save(history);
         return ResponseEntity.ok(history);
     }
-
-    @GetMapping()
-    public Device getDeviceById(@RequestParam Integer deviceId) {
-        return deviceService.getDeviceById(deviceId);
+    @GetMapping
+    public ResponseEntity<Device> getDeviceStatus(@RequestParam Integer deviceId) {
+        Device device = deviceService.getDeviceById(deviceId);
+        return ResponseEntity.ok(device);
     }
 }

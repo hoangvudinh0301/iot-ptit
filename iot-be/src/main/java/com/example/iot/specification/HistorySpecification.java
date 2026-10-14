@@ -2,23 +2,26 @@ package com.example.iot.specification;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Year;
 import java.time.YearMonth;
 
 import org.springframework.data.jpa.domain.Specification;
 
 import com.example.iot.entity.History;
+import com.example.iot.repository.HistoryRepository;
 
 import jakarta.persistence.criteria.JoinType;
 
 public class HistorySpecification {
+    HistoryRepository historyRepository;
+
     public record TimeRange(LocalDateTime start, LocalDateTime end) {}
 
     public static TimeRange parseTimeRange(String time) {
         if (time == null || time.isBlank()) {
             throw new IllegalArgumentException("Thời gian không được để trống");
         }
-
         LocalDateTime start;
         LocalDateTime end;
 

@@ -15,9 +15,9 @@ function HistoryPagination({ currentPage, totalPages, onPageChange, pageSize, on
         <div className="history-pagination">
             <span>Số trang</span>
             <select value={pageSize} onChange={(e) => onPageSizeChange(Number(e.target.value))}>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="30">30</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
             </select>
             <span>Trang {currentPage + 1}/{totalPages}</span>
             <button

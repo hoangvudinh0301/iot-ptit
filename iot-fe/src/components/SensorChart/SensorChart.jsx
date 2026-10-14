@@ -2,58 +2,107 @@ import { useState } from "react";
 import "./SensorChart.css";
 import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from "recharts";
 import { useEffect } from "react";
-// const data = [
-//     { time: "0", temperature: 220, humidity: 100, light: 160 },
-//     { time: "1", temperature: 250, humidity: 230, light: 260 },
-//     { time: "2", temperature: 20, humidity: 80, light: 90 },
-//     { time: "4", temperature: 240, humidity: 45, light: 40 },
-//     { time: "3", temperature: 230, humidity: 30, light: 140 },
-//     { time: "4", temperature: 40, humidity: 60, light: 72 },
-//     { time: "4", temperature: 50, humidity: 23, light: 34 },
-//     { time: "4", temperature: 150, humidity: 56, light: 40 },
-//     { time: "4", temperature: 89, humidity: 76, light: 33}
-// ];
+import { Client } from "@stomp/stompjs";
 function SensorChart() {
-
     const [sensorData, setSensorData] = useState([]);
-
     useEffect(() => {
-        fetch(`http://localhost:8080/api/sensor-data/latest-30`)
-            .then((response) => response.json())
-            .then((data) => {
-
-                const grouped = {};
-                console.log(data);
-                data.forEach((item) => {
-                    const time = item.createdAt;
-                    if (!grouped[time]) {
-                        grouped[time] = {time};
-                    }
-                    if (item.sensor.id === 1) {
-                        grouped[time].temperature = item.value;
-                    }
-                    if (item.sensor.id === 2) {
-                        grouped[time].humidity = item.value;
-                    }
-                    if (item.sensor.id === 3) {
-                        grouped[time].light = item.value;
-                    }
-                });
-                const formattedData = Object.values(grouped).map((item) => ({
-                    ...item,
-                    time: new Date(item.time).toLocaleTimeString("vi-VN", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: false
-                    })
-                }));
-                setSensorData(formattedData);
-                console.log(formattedData);
-            })
-            .catch((error) => {
-                console.error("Lỗi: ", error);
+        let active = true;
+        let subscription;
+        let initialized = false;
+        const pending = [];
+        const formatTime = (timestamp) =>
+            new Date(timestamp).toLocaleTimeString("vi-VN", {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: false
             });
+        const appendPoint = (point) => {
+            if (!active) return;
+            setSensorData((prev) => {
+                const exists = prev.some(
+                    (item) => item.timestamp === point.createdAt
+                );
+                if (exists) return prev;
+                return [...prev, {
+                    timestamp: point.createdAt,
+                    time: formatTime(point.createdAt),
+                    temperature: point.temperature,
+                    humidity: point.humidity,
+                    light: point.light
+                }]
+                    .sort((a, b) =>
+                        new Date(a.timestamp) -
+                        new Date(b.timestamp)
+                    )
+                    .slice(-30);
+            });
+        };
+        const client = new Client({
+            brokerURL: "ws://localhost:8080/ws",
+            reconnectDelay: 5000,
+            onConnect: async () => {
+                subscription = client.subscribe(
+                    "/topic/sensors",
+                    (message) => {
+                        const point = JSON.parse(message.body);
+                        if (!initialized) {
+                            pending.push(point);
+                        } else {
+                            appendPoint(point);
+                        }
+                    }
+                );
+                if (!initialized) {
+                    try {
+                        const response = await fetch(
+                            "http://localhost:8080/api/sensor-data/latest-30"
+                        );
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}`);
+                        }
+                        const records = await response.json();
+                        const grouped = {};
+                        records.forEach((item) => {
+                            const timestamp = item.createdAt;
+                            if (!grouped[timestamp]) {
+                                grouped[timestamp] = {
+                                    timestamp,
+                                    time: formatTime(timestamp)
+                                };
+                            }
+                            if (item.sensor.id === 1) {
+                                grouped[timestamp].temperature = item.value;
+                            } else if (item.sensor.id === 2) {
+                                grouped[timestamp].humidity = item.value;
+                            } else if (item.sensor.id === 3) {
+                                grouped[timestamp].light = item.value;
+                            }
+                        });
+                        const initial = Object.values(grouped)
+                            .sort((a, b) =>
+                                new Date(a.timestamp) -
+                                new Date(b.timestamp)
+                            )
+                            .slice(-10);
+                        if (active) {
+                            setSensorData(initial);
+                        }
+                    } catch (error) {
+                        console.error("Lỗi tải dữ liệu:", error);
+                    } finally {
+                        initialized = true;
+                        pending.splice(0).forEach(appendPoint);
+                    }
+                }
+            }
+        });
+        client.activate();
+        return () => {
+            active = false;
+            subscription?.unsubscribe();
+            client.deactivate();
+        };
     }, []);
 
     return (
@@ -61,7 +110,7 @@ function SensorChart() {
             <h3>Biểu đồ</h3>
             <div className="chart">
                 <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={sensorData} margin={{top: 5, right: 10, left: 0, bottom: 10}}>
+                    <LineChart data={sensorData.slice(-10)} margin={{top: 5, right: 10, left: 0, bottom: 10}}>
                         <CartesianGrid strokeDasharray="0" stroke="#e5e5e5"/>
                         <XAxis
                             dataKey="time"
@@ -104,9 +153,7 @@ function SensorChart() {
                     </LineChart>
                 </ResponsiveContainer>
             </div>
-
         </div>
     );
 }
-
 export default SensorChart;

@@ -19,6 +19,7 @@
 .sensor-search select {
     color: #2367ee;
     font-weight: 600;
+    cursor: pointer;
 }
 
 .sensor-search input {
@@ -37,6 +38,7 @@
     background-color: #2367ee;
     color: white;
     font-weight: 600;
+    cursor: pointer;
 }
 .sensor-search button:hover {
     opacity: 0.8;
@@ -61,6 +63,11 @@
     outline: none;
     border-color: #dc2626;
     box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+.sensor-search button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 @keyframes inputShake {

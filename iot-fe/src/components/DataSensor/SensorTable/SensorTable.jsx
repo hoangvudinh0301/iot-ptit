@@ -2,27 +2,6 @@ import Pagination from "../Pagination/Pagination";
 import { useEffect, useState } from "react";
 import "./SensorTable.css"
 
-
-// const sensors = [
-//     {
-//         id: 1,
-//         sensor: "DHT11",
-//         value: "30",
-//         createdAt: "2026-09-12 17:00:00"
-//     },
-//     {
-//         id: 2,
-//         sensor: "DHT11",
-//         value: "31",
-//         createdAt: "2026-09-12 17:30:00"
-//     },
-//     {
-//         id: 3,
-//         sensor: "LDR",
-//         value: "32",
-//         createdAt: "2026-09-12 17:35:00"
-//     },
-// ];
 function SensorTable({ searchType, searchValue, currentPage, onPageChange }) {
     
     const [sensors, setSensors] = useState([]);

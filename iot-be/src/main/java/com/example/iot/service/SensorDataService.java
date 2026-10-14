@@ -40,6 +40,15 @@ public class SensorDataService {
 
     public Page<SensorData> getSensorDataByDate(String time, Pageable pageable) {
         time = time.trim().replace(" ", "T");
+
+        if (time.matches("\\d{2}:\\d{2}:\\d{2}")) {
+            LocalTime localTime = LocalTime.parse(time);
+
+            return sensorDataRepository.findByTime(
+                localTime,
+                pageable
+            );
+        }
         LocalDateTime start;
         LocalDateTime end;
         if (time.length() == 4) {

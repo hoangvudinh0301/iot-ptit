@@ -37,7 +37,7 @@ function SensorSearch( { onSearch }) {
                 onChange={(e) => {
                     setSearchValue(e.target.value); 
                     setError("")}}/>
-            <button onClick={handleSearch}>Tìm kiếm</button>
+            <button onClick={handleSearch} disabled={searchType === ""}>Tìm kiếm</button>
         </div>
     )
 }

@@ -1,5 +1,6 @@
 package com.example.iot.repository;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -29,4 +30,13 @@ public interface SensorDataRepository extends JpaRepository<SensorData, Integer>
     """)
     Page<SensorData> searchSensorDataBySensorValue(@Param("type") String type, @Param("value") Double valye, Pageable pageable);
     List<SensorData> findTop30ByOrderByCreatedAtDesc();
+
+    @Query("""
+        SELECT s FROM SensorData s
+        WHERE FUNCTION('TIME', s.createdAt) = :time
+    """)
+    Page<SensorData> findByTime(
+        @Param("time") LocalTime time,
+        Pageable pageable
+    );
 }

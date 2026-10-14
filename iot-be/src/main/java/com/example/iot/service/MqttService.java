@@ -1,5 +1,8 @@
 package com.example.iot.service;
 
+import java.time.LocalDateTime;
+import java.util.Map;
+
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -24,7 +27,7 @@ public class MqttService {
     MqttClient mqttClient;
     DeviceRepository deviceRepository;
     HistoryRepository historyRepository;
-
+    WebSocketService webSocketService;
     SensorDataService sensorDataService;
     ObjectMapper objectMapper;
 
@@ -75,6 +78,12 @@ public class MqttService {
             sensorDataService.saveSensorData("humidity", humidity);
             sensorDataService.saveSensorData("light", light);
             System.out.println("Sensor data saved successfully");
+            webSocketService.sendSensorData(Map.of(
+                "temperature", temperature,
+                "humidity", humidity,
+                "light", light,
+                "createdAt", LocalDateTime.now().toString()
+            ));
         } catch (Exception e) {
             System.out.println("Error processing sensor data");
             e.printStackTrace();
@@ -99,8 +108,14 @@ public class MqttService {
             )
                 .ifPresent(history -> {
                     history.setStatus(status);
+                    device.setStatus(status);
                     historyRepository.save(history);
+                    deviceRepository.save(device);
                     System.out.println("History updated: Device " + deviceId + " -> " + status);
+                    webSocketService.sendDeviceStatus(Map.of(
+                        "deviceId", deviceId,
+                        "stauts", status
+                    ));
                 });
 
         } catch (Exception e) {
