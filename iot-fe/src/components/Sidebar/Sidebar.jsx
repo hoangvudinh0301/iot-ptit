@@ -15,6 +15,10 @@ function Sidebar() {
                         isActive ? "menu-item active" : "menu-item"}>
                 History
             </NavLink>
+            <NavLink to="/virtual-sensors" className={({ isActive }) =>
+                        isActive ? "menu-item active" : "menu-item"}>
+                Statistics
+            </NavLink>
             <NavLink to="/profile" className={({ isActive }) =>
                         isActive ? "menu-item active" : "menu-item"}>
                 Profile

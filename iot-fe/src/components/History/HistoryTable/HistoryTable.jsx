@@ -2,6 +2,7 @@ import HistoryPagination from "../HistoryPagination/HistoryPagination";
 import "./HistoryTable.css";
 import { useState } from "react";
 import { useEffect } from "react";
+import { apiFetch } from "../../../services/api";
 
 function HistoryTable({ filters, currentPage, onPageChange }) {
     const [histories, setHistories] = useState([]);
@@ -25,40 +26,51 @@ function HistoryTable({ filters, currentPage, onPageChange }) {
         onPageChange(0);
     };
 
+    
     useEffect(() => {
         const controller = new AbortController();
 
         const fetchHistory = async () => {
             setLoading(true);
+
             try {
                 const params = new URLSearchParams({
                     page: currentPage,
                     size: pageSize,
-                    sortBy: sortConfig.key === "device" ? "device.name" : 
-                        sortConfig.key, direction: sortConfig.direction
+                    sortBy: sortConfig.key === "device"
+                        ? "device.name"
+                        : sortConfig.key,
+                    direction: sortConfig.direction
                 });
-                Object.entries(filters).forEach(([key, value]) => {
-                    if (value && value.trim() !== "") {
-                        params.append(key, value.trim());
+
+                Object.entries(filters ?? {}).forEach(([key, value]) => {
+                    if (value != null && String(value).trim() !== "") {
+                        params.append(key, String(value).trim());
                     }
                 });
-                const url = `http://localhost:8080/api/history/search?${params.toString()}`;
-                console.log(url);
-                const response = await fetch(url, {
+
+                const url = `/api/history/search?${params.toString()}`;
+
+                console.log("Fetching history:", url);
+
+                // apiFetch đã tự động thêm JWT và trả về JSON
+                const data = await apiFetch(url, {
                     signal: controller.signal
                 });
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-                const data = await response.json();
-                setHistories(data.content ?? []);
-                setTotalPages(data.totalPages ?? 0);
+
+                if (controller.signal.aborted) return;
+
+                setHistories(data?.content ?? []);
+                setTotalPages(data?.totalPages ?? 0);
 
             } catch (error) {
                 if (error.name !== "AbortError") {
                     console.error("Lỗi tải lịch sử:", error);
-                    setHistories([]);
-                    setTotalPages(0);
+
+                    if (!controller.signal.aborted) {
+                        setHistories([]);
+                        setTotalPages(0);
+                    }
                 }
             } finally {
                 if (!controller.signal.aborted) {
@@ -66,9 +78,13 @@ function HistoryTable({ filters, currentPage, onPageChange }) {
                 }
             }
         };
+
         fetchHistory();
+
         return () => controller.abort();
+
     }, [currentPage, filters, sortConfig, pageSize]);
+
 
     const getIcon = (key) => {
         if (sortConfig.key !== key) return "↕";

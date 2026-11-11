@@ -1,7 +1,6 @@
 package com.example.iot.entity;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

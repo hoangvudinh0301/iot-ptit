@@ -1,6 +1,7 @@
 import Pagination from "../Pagination/Pagination";
 import { useEffect, useState } from "react";
 import "./SensorTable.css"
+import { apiFetch } from "../../../services/api";
 
 function SensorTable({ searchType, searchValue, currentPage, onPageChange }) {
     
@@ -23,34 +24,65 @@ function SensorTable({ searchType, searchValue, currentPage, onPageChange }) {
         }));
     };
 
+    
+    
     useEffect(() => {
+        const controller = new AbortController();
 
-        let url;
-        const sortBy = sortConfig.key || "createdAt";
-        const direction = sortConfig.direction;
-
-        if (searchType === "all" || searchType === "") {
-            url = `http://localhost:8080/api/sensor-data/all?page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&direction=${direction}`
-        } else if (searchType === "time") {
-            url = `http://localhost:8080/api/sensor-data/search/date?date=${searchValue}&page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&direction=${direction}`
-        } else if (searchType === "temperature") {
-            url = `http://localhost:8080/api/sensor-data/search/sensor?type=temperature&value=${searchValue}&page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&direction=${direction}`
-        } else if (searchType === "humidity") {
-            url = `http://localhost:8080/api/sensor-data/search/sensor?type=humidity&value=${searchValue}&page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&direction=${direction}`
-        } else {
-            url = `http://localhost:8080/api/sensor-data/search/sensor?type=light&value=${searchValue}&page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&direction=${direction}`
-        }
-        fetch(url)
-            .then((response) => response.json())
-            .then((data) => {
-                setSensors(data.content);
-                console.log(data.content);
-                setTotalPages(data.totalPages);
-            })
-            .catch((error) => {
-                console.error("Lỗi: ", error);
+        const loadSensors = async () => {
+            const params = new URLSearchParams({
+                page: currentPage,
+                size: pageSize,
+                sortBy: sortConfig.key === "sensor"
+                    ? "sensor.name"
+                    : sortConfig.key,
+                direction: sortConfig.direction
             });
+
+            const keyword = searchValue?.trim() ?? "";
+            let url;
+
+            if (searchType === "all" || searchType === "") {
+                if (keyword) {
+                    params.set("keyword", keyword);
+                    url = `/api/sensor-data/search/all?${params}`;
+                } else {
+                    url = `/api/sensor-data/all?${params}`;
+                }
+            } else if (searchType === "time") {
+                params.set("date", keyword);
+                url = `/api/sensor-data/search/date?${params}`;
+            } else {
+                params.set("type", searchType);
+                params.set("value", keyword);
+                url = `/api/sensor-data/search/sensor?${params}`;
+            }
+
+            try {
+                const data = await apiFetch(url, {
+                    signal: controller.signal
+                });
+
+                if (controller.signal.aborted) return;
+
+                setSensors(data?.content ?? []);
+                setTotalPages(data?.totalPages ?? 0);
+
+            } catch (error) {
+                if (error.name !== "AbortError") {
+                    console.error("Lỗi lấy dữ liệu cảm biến:", error);
+                    setSensors([]);
+                    setTotalPages(0);
+                }
+            }
+        };
+
+        loadSensors();
+
+        return () => controller.abort();
+
     }, [currentPage, searchType, searchValue, sortConfig, pageSize]);
+
 
     const getIcon = (key) => {
         if (sortConfig.key !== key) return "↕";

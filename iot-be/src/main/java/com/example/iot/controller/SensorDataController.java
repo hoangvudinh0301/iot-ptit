@@ -61,6 +61,21 @@ public class SensorDataController {
         return sensorDataService.getSensorDataByDate(date, PageRequest.of(page, size, sort));
     }
     
+    @GetMapping("/search/all")
+    public Page<SensorData> searchAll(
+            @RequestParam String keyword,
+            @RequestParam (name = "page", defaultValue = "0") int page,
+            @RequestParam (name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
+            @RequestParam(name = "direction", defaultValue = "desc") String direction
+    ) {
+        Sort sort = direction.equalsIgnoreCase("asc")
+            ? Sort.by(sortBy).ascending()
+            : Sort.by(sortBy).descending();
+
+        return sensorDataService.searchAll(keyword, PageRequest.of(page, size, sort));
+    }
+
     @GetMapping("/latest")
     public ResponseEntity<?> getLatest() {
 

@@ -7,6 +7,7 @@ function DevicePanel() {
             <h3>Thiết bị</h3>
             <DeviceItem name="Device 1" deviceId={1}/>
             <DeviceItem name="Device 2" deviceId={2}/>
+            <DeviceItem name="Device 3" deviceId={3}/>
         </div>
     )
 }

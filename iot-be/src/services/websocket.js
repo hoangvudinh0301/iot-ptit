@@ -1,22 +1,22 @@
 import { Client } from "@stomp/stompjs";
 
-export const stompClient = new Client({
+const token = sessionStorage.getItem("accessToken");
+
+const stompClient = new Client({
     brokerURL: "ws://localhost:8080/ws",
+
+    connectHeaders: {
+        Authorization: `Bearer ${token}`
+    },
 
     reconnectDelay: 5000,
 
-    heartbeatIncoming: 10000,
-    heartbeatOutgoing: 10000,
-
     onConnect: () => {
-        console.log("WebSocket connected");
-    },
-
-    onStompError: (frame) => {
-        console.error("STOMP error:", frame);
-    },
-
-    onWebSocketError: (error) => {
-        console.error("WebSocket error:", error);
+        stompClient.subscribe("/topic/sensors", (message) => {
+            const data = JSON.parse(message.body);
+            console.log("Sensor realtime:", data);
+        });
     }
 });
+
+stompClient.activate();

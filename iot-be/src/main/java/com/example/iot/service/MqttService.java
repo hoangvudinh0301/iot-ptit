@@ -2,7 +2,10 @@ package com.example.iot.service;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.LinkedHashMap;
 
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -29,11 +32,31 @@ public class MqttService {
     HistoryRepository historyRepository;
     WebSocketService webSocketService;
     SensorDataService sensorDataService;
+    VirtualSensorService virtualSensorService;
     ObjectMapper objectMapper;
 
     @PostConstruct
     public void init() {
         System.out.println("Initializing MQTT...");
+        // With clean sessions, broker subscriptions must be restored after reconnect.
+        mqttClient.setCallback(new MqttCallbackExtended() {
+            @Override
+            public void connectComplete(boolean reconnect, String serverURI) {
+                if (reconnect) subscribe();
+            }
+
+            @Override
+            public void connectionLost(Throwable cause) {
+                System.err.println("MQTT connection lost: " +
+                    (cause == null ? "unknown" : cause.getMessage()));
+            }
+
+            @Override
+            public void messageArrived(String topic, MqttMessage message) { }
+
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) { }
+        });
         subscribe();
     }
 
@@ -68,58 +91,90 @@ public class MqttService {
     
     public void handleSensorData(String topic, MqttMessage mqttMessage) {
         try {
-            String payload = new String(mqttMessage.getPayload());
-            System.out.println("Received sensor data: " + payload);
+            String payload = new String(mqttMessage.getPayload(), java.nio.charset.StandardCharsets.UTF_8);
             JsonNode json = objectMapper.readTree(payload);
-            double temperature =json.get("temperature").asDouble();
-            double humidity =json.get("humidity").asDouble();
-            double light =json.get("light").asDouble();
-            sensorDataService.saveSensorData("temperature", temperature);
-            sensorDataService.saveSensorData("humidity", humidity);
-            sensorDataService.saveSensorData("light", light);
-            System.out.println("Sensor data saved successfully");
-            webSocketService.sendSensorData(Map.of(
-                "temperature", temperature,
-                "humidity", humidity,
-                "light", light,
-                "createdAt", LocalDateTime.now().toString()
-            ));
+
+            // Three new simulated sensors are persisted independently of DHT11.
+            virtualSensorService.recordFromMqtt(json);
+
+            Map<String, Object> socketPayload = new LinkedHashMap<>();
+            for (String type : new String[]{"temperature", "humidity", "light"}) {
+                JsonNode value = json.get(type);
+                if (value != null && value.isNumber()) {
+                    double number = value.asDouble();
+                    try {
+                        sensorDataService.saveSensorData(type, number);
+                        socketPayload.put(type, number);
+                    } catch (Exception ex) {
+                        System.err.println("Cannot store " + type + ": " + ex.getMessage());
+                    }
+                }
+            }
+            for (String type : new String[]{"virtual1", "virtual2", "virtual3"}) {
+                JsonNode value = json.get(type);
+                if (value != null && value.isIntegralNumber()) {
+                    socketPayload.put(type, value.asInt());
+                }
+            }
+            socketPayload.put("createdAt", LocalDateTime.now().toString());
+            webSocketService.sendSensorData(socketPayload);
         } catch (Exception e) {
-            System.out.println("Error processing sensor data");
+            System.err.println("Error processing sensor data: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     public void handleStatus(String topic, MqttMessage mqttMessage) {
-        String status = new String(mqttMessage.getPayload()).trim().toUpperCase();
+        String status = new String(
+            mqttMessage.getPayload(),
+            java.nio.charset.StandardCharsets.UTF_8
+        ).trim().toUpperCase();
+
         System.out.println("Received MQTT status: " + topic + " -> " + status);
+
         try {
             String[] parts = topic.split("/");
             Integer deviceId = Integer.parseInt(parts[2]);
-            Device device = deviceRepository.findById(deviceId)
-                                .orElseThrow(() -> new RuntimeException("Device not found"));
-            
-            device.setStatus(status);
-            deviceRepository.save(device);
 
-            historyRepository.findFirstByDevice_IdAndStatusOrderByCreatedAtDesc(
+            if (!status.equals("ON") && !status.equals("OFF")) {
+                System.out.println("Invalid device status: " + status);
+                return;
+            }
+
+            Device device = deviceRepository.findById(deviceId)
+                .orElseThrow(() ->
+                    new RuntimeException("Device not found: " + deviceId)
+                );
+
+            var pendingHistory =
+                historyRepository.findFirstByDevice_IdAndStatusOrderByCreatedAtDesc(
                     deviceId,
                     "PENDING"
-            )
-                .ifPresent(history -> {
-                    history.setStatus(status);
-                    device.setStatus(status);
+                );
+
+            if (pendingHistory.isPresent()) {
+                var history = pendingHistory.get();
+                if (status.equalsIgnoreCase(history.getAction())) {
+                    history.setStatus("SUCCESS");
                     historyRepository.save(history);
-                    deviceRepository.save(device);
-                    System.out.println("History updated: Device " + deviceId + " -> " + status);
-                    webSocketService.sendDeviceStatus(Map.of(
-                        "deviceId", deviceId,
-                        "stauts", status
-                    ));
-                });
+
+                    System.out.println(
+                        "History SUCCESS: Device " + deviceId
+                        + " -> " + status
+                    );
+                }
+            }
+            device.setStatus(status);
+            deviceRepository.save(device);
+            webSocketService.sendDeviceStatus(Map.of(
+                "deviceId", deviceId,
+                "status", status
+            ));
 
         } catch (Exception e) {
+            System.out.println("Error processing device status");
             e.printStackTrace();
         }
     }
+
 }

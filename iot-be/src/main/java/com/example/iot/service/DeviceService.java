@@ -1,10 +1,6 @@
 package com.example.iot.service;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import com.example.iot.entity.Device;
 import com.example.iot.repository.DeviceRepository;
 
